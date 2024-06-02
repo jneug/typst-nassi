@@ -2,7 +2,7 @@
 
 #import "elements.typ"
 #import "elements-de.typ"
-#import "draw.typ": draw-elements
+#import "draw.typ" as draw: layout-elements, draw-elements
 
 #let parse-strukt( content ) = {
   if content == none {
@@ -16,6 +16,11 @@
   let i = 0
   while i < code.len() {
     let line = code.at(i).trim()
+
+    if line == "" {
+      i += 1
+      continue
+    }
 
     if line.starts-with("if ") {
       let (left, right) = ((),())
@@ -38,7 +43,7 @@
         line.slice(3).trim(),
         parse-strukt(left.join("\n")),
         parse-strukt(right.join("\n")),
-        center: if left == () { .25 } else if right == () { .75 } else { .5 }
+        column-split: if left == () { 25% } else if right == () { 75% } else { 50% }
       )
     } else if line.starts-with("while ") {
       let children = ()
@@ -83,51 +88,17 @@
   return elems
 }
 
-#let diagram(
-  width: 100%,
-  font: ("Verdana", "Geneva"),
-  fontsize: 10pt,
-  inset: .5em,
-  colors: (:),
-  stroke: 1pt+black,
-  labels: (),
-  ..cetz-args,
-  elements
-) = {
-  if type(elements) == content and elements.func() == raw {
-    elements = elements.text
-  }
-  if type(elements) != array {
-    elements = parse-strukt(elements)
-  }
-
-  layout(size => {
-    let width = width
-    if type(width) == ratio {
-      width *= size.width
-    }
-
-    set text(font: font, size:fontsize)
-    cetz.canvas(..cetz-args, {
-      cetz.draw.get-ctx(ctx => {
-        draw-elements(
-          ctx, (0,0), width, elements,
-          colors:colors,
-          stroke:stroke,
-          labels:labels,
-          inset:inset
-        )
-      })
-    })
-  })
-}
-
-#let shneiderman( ..args ) = (body) => {
-  show raw.where(block:true, lang: "nassi"): diagram.with(..args)
-  body
-}
-
 #let themes = (
+  default: (
+    empty: white,
+    process: white,
+    call: white,
+    branch: white,
+    loop: white,
+    switch: white,
+    parallel: white,
+    function: white
+  ),
   nocolor: (
     empty: white,
     process: white,
@@ -149,3 +120,47 @@
     function: luma(100%)
   )
 )
+
+#let diagram(
+  width: 100%,
+  font: ("Verdana", "Geneva"),
+  fontsize: 10pt,
+  inset: .5em,
+  theme: (:),
+  stroke: 1pt+black,
+  labels: (),
+  ..cetz-args,
+  elements
+) = {
+  if type(elements) == content and elements.func() == raw {
+    elements = elements.text
+  }
+  if type(elements) != array {
+    elements = parse-strukt(elements)
+  }
+
+  layout(size => {
+    let width = width
+    if type(width) == ratio {
+      width *= size.width
+    }
+
+    set text(font: font, size:fontsize)
+    cetz.canvas(..cetz-args, {
+      cetz.draw.get-ctx(ctx => {
+        let layout = layout-elements(
+          ctx, (0,0),
+          cetz.util.resolve-number(ctx, width),
+          cetz.util.resolve-number(ctx, inset),
+          elements
+        )
+        draw-elements(ctx, layout, stroke:stroke, theme:theme, labels:labels)
+      })
+    })
+  })
+}
+
+#let shneiderman( ..args ) = (body) => {
+  show raw.where(block:true, lang: "nassi"): diagram.with(..args)
+  body
+}

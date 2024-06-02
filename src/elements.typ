@@ -11,83 +11,62 @@
   CALL: 8
 )
 
-#let empty( height: auto ) = (
+#let element( type, text, ..args ) = (
   (
-    type: TYPES.EMPTY,
-    text: sym.emptyset,
-    height: height
-  ),
-)
-
-#let process( text, height: auto ) = (
-  (
-    type: TYPES.PROCESS,
+    type: type,
     text: text,
-    height: height
+    pos: (0,0),
+    width: auto,
+    height: auto,
+    inset: auto,
+    grow: 0,
+    fill: auto,
+    stroke: auto,
+    ..args.named()
   ),
 )
 
-#let assign( var, expression, height: auto, symbol:sym.arrow.l ) = (
-  (
-    type: TYPES.PROCESS,
-    text: var + " " + symbol + " " + expression,
-    height: height
-  ),
+#let empty = element.with(TYPES.EMPTY, sym.emptyset)
+
+#let function( text, elements, ..args ) = element(TYPES.FUNCTION,
+  text,
+  elements: elements,
+  ..args.named()
 )
 
-#let loop( text, elements, height: auto ) = (
-  (
-    type: TYPES.LOOP,
-    text: text,
-    elements: elements,
-    height: height
-  ),
+#let process = element.with(TYPES.PROCESS)
+
+#let assign( var, expression, symbol:sym.arrow.l, ..args ) = element(TYPES.PROCESS,
+  var + " " + symbol + " " + expression,
+  symbol: symbol,
+  ..args.named()
 )
 
-#let branch( text, left, right, height: auto, center:.5, labels:(), text-shift:.0 ) = (
-  (
-    type: TYPES.BRANCH,
-    text: text,
-    left: left,
-    right: right,
-    height: height,
-    center: center,
-    labels: labels,
-    text-shift: text-shift
-  ),
+#let call = element.with(TYPES.CALL)
+
+#let loop( text, elements, ..args ) = element(TYPES.LOOP,
+  text,
+  elements: elements,
+  ..args.named()
 )
 
-#let switch( text, ..branches, height: auto ) = (
-  (
-    type: TYPES.SWITCH,
-    text: text,
-    branches: branches,
-    height: height
-  ),
+#let branch( text, left, right, column-split:50%, labels:(), ..args ) = element(TYPES.BRANCH,
+  text,
+  left: left,
+  right: right,
+  column-split: column-split / 100%,
+  labels: labels,
+  ..args.named()
 )
 
-#let parallel( text, ..branches, height: auto ) = (
-  (
-    type: TYPES.PARALLEL,
-    text: text,
-    branches: branches,
-    height: height
-  ),
+#let switch( text, ..branches-args ) = element(TYPES.SWITCH,
+  text,
+  brnaches: branches-args.pos(),
+  ..branches-args.named()
 )
 
-#let function( text, elements, height: auto ) = (
-  (
-    type: TYPES.FUNCTION,
-    text: text,
-    elements: elements,
-    height: height
-  ),
-)
-
-#let call( text, height: auto ) = (
-  (
-    type: TYPES.CALL,
-    text: text,
-    height: height
-  ),
+#let parallel( text, ..branches-args ) = element(TYPES.PARALLEL,
+  text,
+  brnaches: branches-args.pos(),
+  ..branches-args.named()
 )
