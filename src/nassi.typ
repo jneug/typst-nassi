@@ -2,7 +2,7 @@
 
 #import "elements.typ"
 #import "elements-de.typ"
-#import "draw.typ" as draw: layout-elements, draw-elements
+#import "draw.typ" as draw
 
 #let parse-strukt( content ) = {
   if content == none {
@@ -147,15 +147,16 @@
 
     set text(font: font, size:fontsize)
     cetz.canvas(..cetz-args, {
-      cetz.draw.get-ctx(ctx => {
-        let layout = layout-elements(
-          ctx, (0,0),
-          cetz.util.resolve-number(ctx, width),
-          cetz.util.resolve-number(ctx, inset),
-          elements
-        )
-        draw-elements(ctx, layout, stroke:stroke, theme:theme, labels:labels)
-      })
+      draw.diagram((0,0), elements, width:width, inset:inset, theme:theme, stroke:stroke, labels:labels)
+      // cetz.draw.get-ctx(ctx => {
+      //   let layout = layout-elements(
+      //     ctx, (0,0),
+      //     cetz.util.resolve-number(ctx, width),
+      //     cetz.util.resolve-number(ctx, inset),
+      //     elements
+      //   )
+      //   draw-elements(ctx, layout, stroke:stroke, theme:theme, labels:labels)
+      // })
     })
   })
 }
