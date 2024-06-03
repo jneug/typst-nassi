@@ -62,7 +62,7 @@ In this case, the diagram is created from a simple pseudocode. To have more cont
 
 ![](assets/example-3.png)
 
-Since **nassi** uses **cetz** for drawing, you can add diagrams diretly to a canvas. Each block gets a name within the diagram to reference it within the drawing:
+Since **nassi** uses **cetz** for drawing, you can add diagrams directly to a canvas. Each block gets a name within the diagram group to reference it in the drawing:
 
 ````typst
 #import "@preview/cetz:0.2.2"
