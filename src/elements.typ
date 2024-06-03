@@ -22,6 +22,7 @@
     grow: 0,
     fill: auto,
     stroke: auto,
+    name: auto,
     ..args.named()
   ),
 )

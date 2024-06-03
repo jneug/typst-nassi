@@ -1,7 +1,6 @@
 #import "@preview/cetz:0.2.2"
 
 #import "elements.typ"
-#import "elements-de.typ"
 #import "draw.typ"
 
 #let parse(content) = {
@@ -25,10 +24,19 @@
     if line.starts-with("if ") {
       let (left, right) = ((), ())
       let left-branch = true
+      let if-count = 0
 
       i += 1
-      while code.at(i).trim() not in ("endif", "end if") {
-        if code.at(i).trim() == "else" {
+      while if-count > 0 or code.at(i).trim() not in ("endif", "end if") {
+        let code-line = code.at(i).trim()
+
+        if code-line.starts-with("if") {
+          if-count += 1
+        } else if if-count > 0 and code-line in ("endif", "end if") {
+          if-count -= 1
+        }
+
+        if code.at(i).trim() == "else" and if-count == 0 {
           left-branch = false
         } else if left-branch {
           left += (code.at(i),)
@@ -53,9 +61,18 @@
       )
     } else if line.starts-with("while ") {
       let children = ()
+      let while-count = 0
 
       i += 1
-      while code.at(i).trim() not in ("endwhile", "end while") {
+      while while-count > 0 or code.at(i).trim() not in ("endwhile", "end while") {
+        let code-line = code.at(i).trim()
+
+        if code-line.starts-with("while") {
+          while-count += 1
+        } else if while-count > 0 and code-line in ("endwhile", "end while") {
+          while-count -= 1
+        }
+
         children += (code.at(i),)
         i += 1
       }
