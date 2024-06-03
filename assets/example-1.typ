@@ -1,20 +1,21 @@
+#set page(width: 13cm, height:auto, margin: 5mm)
+
 #import "../src/nassi.typ"
+#show: nassi.shneiderman()
 
-#set page(width: auto, height:auto, margin: 5mm)
-
-#nassi.diagram(width:12cm, ```
+```nassi
 function ggt(a, b)
   while a > 0 and b > 0
     if a > b
       a <- a - b
     else
       b <- b - a
-    endif
-  endwhile
+    end if
+  end while
   if b == 0
     return a
   else
     return b
-  endif
-endfunction
-```)
+  end if
+end function
+```
