@@ -1,35 +1,8 @@
 #import "@preview/cetz:0.2.2" as cetz: draw
 
-#let typst-measure = measure
 #import cetz.util: measure, resolve-number
 
 #import "elements.typ": TYPES, empty
-
-#let calc-height(ctx, elements) = {
-  let height = 0
-
-  if elements != none {
-    let (min-y, max-y) = elements.fold(
-      (none, none),
-      (x, f) => f(ctx).drawables.fold(x, ((y1, y2), d) => if "pos" in d and "height" in d {
-        if y1 == none {
-          (d.pos.at(1) - d.height / 2, d.pos.at(1) + d.height / 2)
-        } else {
-          (
-            calc.min(y1, d.pos.at(1) - d.height / 2),
-            calc.max(y2, d.pos.at(1) + d.height / 2),
-          )
-        }
-      } else {
-        (y1, y2)
-      }),
-    )
-
-    height = max-y - min-y
-  }
-
-  return height
-}
 
 #let rebalance-heights(elements, height-growth, y: auto) = {
   // Count elements that can have a dynamic height
@@ -158,7 +131,7 @@
   return elems
 }
 
-#let draw-elements(ctx, layout, stroke: 1pt + black, theme: (:), labels: (), i:0) = {
+#let draw-elements(ctx, layout, stroke: 1pt + black, theme: (:), labels: (), i: 0) = {
   let i = i
 
   for element in layout {
@@ -172,13 +145,13 @@
         (x + element.width, y - element.height - element.grow),
         stroke: stroke,
         fill: theme.at("empty", default: rgb("#fffff3")),
-        name: name
+        name: name,
       )
       draw.content(
         (x + element.width * .5, y - element.height * .5),
         element.text,
         anchor: "center",
-        name: name + "-text"
+        name: name + "-text",
       )
     } else if element.type == TYPES.PROCESS {
       draw.rect(
@@ -186,13 +159,13 @@
         (x + element.width, y - element.height - element.grow),
         stroke: stroke,
         fill: theme.at("process", default: rgb("#fceece")),
-        name: name
+        name: name,
       )
       draw.content(
         (x + element.inset, y - element.height * .5),
         element.text,
         anchor: "west",
-        name: name + "-text"
+        name: name + "-text",
       )
     } else if element.type == TYPES.CALL {
       draw.rect(
@@ -200,17 +173,22 @@
         (x + element.width, y - element.height - element.grow),
         stroke: stroke,
         fill: theme.at("call", default: rgb("#fceece")).darken(5%),
-        name: name
+        name: name,
       )
-      draw.rect((x + element.inset * .5, y), (
-        x + element.width - element.inset * .5,
-        y - element.height - element.grow,
-      ), stroke: stroke, fill: theme.at("call", default: rgb("#fceece")))
+      draw.rect(
+        (x + element.inset * .5, y),
+        (
+          x + element.width - element.inset * .5,
+          y - element.height - element.grow,
+        ),
+        stroke: stroke,
+        fill: theme.at("call", default: rgb("#fceece")),
+      )
       draw.content(
         (x + element.inset, y - element.height * .5),
         element.text,
         anchor: "west",
-        name: name + "-text"
+        name: name + "-text",
       )
     } else if element.type == TYPES.LOOP {
       draw.rect(
@@ -218,16 +196,16 @@
         (x + element.width, y - element.height - element.grow),
         stroke: stroke,
         fill: theme.at("loop", default: rgb("#dcefe7")),
-        name: name
+        name: name,
       )
       draw.content(
         (x + element.inset, y - element.height * .5),
         element.text,
         anchor: "west",
-        name: name + "-text"
+        name: name + "-text",
       )
 
-      draw-elements(ctx, element.elements, stroke: stroke, theme: theme, i:i)
+      draw-elements(ctx, element.elements, stroke: stroke, theme: theme, i: i)
       i += element.elements.len()
     } else if element.type == TYPES.FUNCTION {
       draw.rect(
@@ -235,16 +213,16 @@
         (x + element.width, y - element.height - element.grow),
         stroke: stroke,
         fill: theme.at("function", default: rgb("#ffffff")),
-        name: name
+        name: name,
       )
       draw.content(
         (x + element.inset, y - element.height * .5),
         strong(element.text),
         anchor: "west",
-        name: name + "-text"
+        name: name + "-text",
       )
 
-      draw-elements(ctx, element.elements, stroke: stroke, theme: theme, i:i)
+      draw-elements(ctx, element.elements, stroke: stroke, theme: theme, i: i)
       i += element.elements.len()
     } else if element.type == TYPES.BRANCH {
       draw.rect(
@@ -252,7 +230,7 @@
         (x + element.width, y - element.height - element.grow),
         fill: theme.at("branch", default: rgb("#fadad0")),
         stroke: stroke,
-        name: name
+        name: name,
       )
 
       let content-width = measure(ctx, element.text).at(0) + 2 * element.inset
@@ -263,7 +241,7 @@
         ),
         element.text,
         anchor: "north",
-        name: name + "-text"
+        name: name + "-text",
       )
 
       draw.line(
@@ -287,9 +265,9 @@
         anchor: "south-east",
       )
 
-      draw-elements(ctx, element.left, stroke: stroke, theme: theme, i:i)
+      draw-elements(ctx, element.left, stroke: stroke, theme: theme, i: i)
       i += element.left.len()
-      draw-elements(ctx, element.right, stroke: stroke, theme: theme, i:i)
+      draw-elements(ctx, element.right, stroke: stroke, theme: theme, i: i)
       i += element.right.len()
     }
   }
@@ -298,6 +276,7 @@
 #let diagram(
   pos,
   anchor: "center",
+  name: "nassi",
   width: 12,
   inset: .194,
   theme: (:),
@@ -307,11 +286,16 @@
 ) = {
   draw.get-ctx(ctx => {
     let layout = layout-elements(
-      ctx, pos,
+      ctx,
+      pos,
       resolve-number(ctx, width),
       resolve-number(ctx, inset),
-      elements
+      elements,
     )
-    draw-elements(ctx, layout, stroke:stroke, theme:theme, labels:labels)
+    draw.group(
+      anchor: anchor,
+      name: name,
+      draw-elements(ctx, layout, stroke: stroke, theme: theme, labels: labels),
+    )
   })
 }

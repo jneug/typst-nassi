@@ -2,9 +2,9 @@
 
 #import "elements.typ"
 #import "elements-de.typ"
-#import "draw.typ" as draw
+#import "draw.typ"
 
-#let parse-strukt( content ) = {
+#let parse(content) = {
   if content == none {
     return ()
   }
@@ -23,7 +23,7 @@
     }
 
     if line.starts-with("if ") {
-      let (left, right) = ((),())
+      let (left, right) = ((), ())
       let left-branch = true
 
       i += 1
@@ -41,9 +41,15 @@
 
       elems += elements.branch(
         line.slice(3).trim(),
-        parse-strukt(left.join("\n")),
-        parse-strukt(right.join("\n")),
-        column-split: if left == () { 25% } else if right == () { 75% } else { 50% }
+        parse(left.join("\n")),
+        parse(right.join("\n")),
+        column-split: if left == () {
+          25%
+        } else if right == () {
+          75%
+        } else {
+          50%
+        },
       )
     } else if line.starts-with("while ") {
       let children = ()
@@ -56,7 +62,7 @@
 
       elems += elements.loop(
         line.slice(6),
-        parse-strukt(children.join("\n"))
+        parse(children.join("\n")),
       )
     } else if line.starts-with("function ") {
       let children = ()
@@ -69,11 +75,11 @@
 
       elems += elements.function(
         line.slice(9),
-        parse-strukt(children.join("\n"))
+        parse(children.join("\n")),
       )
     } else {
       if line.starts-with("|") and line.ends-with("|") {
-        elems += elements.call(line.slice(1,-1).trim())
+        elems += elements.call(line.slice(1, -1).trim())
       } else if line.contains("<-") {
         let (a, b) = line.split("<-")
         elems += elements.assign(a.trim(), b.trim())
@@ -90,14 +96,24 @@
 
 #let themes = (
   default: (
-    empty: white,
-    process: white,
-    call: white,
-    branch: white,
-    loop: white,
-    switch: white,
-    parallel: white,
-    function: white
+    empty: rgb("#fffff3"),
+    process: rgb("#fceece"),
+    call: rgb("#fceece"),
+    branch: rgb("#fadad0"),
+    loop: rgb("#dcefe7"),
+    switch: rgb("#fadad0"),
+    parallel: rgb("#dcefe7"),
+    function: rgb("#ffffff"),
+  ),
+  colorful: (
+    empty: color.map.rainbow.first(),
+    process: color.map.rainbow.at(int(color.map.turbo.len() / 4)),
+    call: color.map.rainbow.at(int(color.map.turbo.len() / 4)),
+    branch: color.map.rainbow.at(int(color.map.turbo.len() / 8)),
+    loop: color.map.rainbow.at(int(color.map.turbo.len() / 16)),
+    switch: color.map.rainbow.at(int(color.map.turbo.len() / 8)),
+    parallel: color.map.rainbow.at(int(color.map.turbo.len() / 16)),
+    function: rgb("#ffffff"),
   ),
   nocolor: (
     empty: white,
@@ -107,7 +123,7 @@
     loop: white,
     switch: white,
     parallel: white,
-    function: white
+    function: white,
   ),
   greyscale: (
     empty: luma(100%),
@@ -117,8 +133,8 @@
     loop: luma(75%),
     switch: luma(50%),
     parallel: luma(75%),
-    function: luma(100%)
-  )
+    function: luma(100%),
+  ),
 )
 
 #let diagram(
@@ -126,17 +142,17 @@
   font: ("Verdana", "Geneva"),
   fontsize: 10pt,
   inset: .5em,
-  theme: (:),
-  stroke: 1pt+black,
+  theme: themes.default,
+  stroke: 1pt + black,
   labels: (),
   ..cetz-args,
-  elements
+  elements,
 ) = {
   if type(elements) == content and elements.func() == raw {
     elements = elements.text
   }
   if type(elements) != array {
-    elements = parse-strukt(elements)
+    elements = parse(elements)
   }
 
   layout(size => {
@@ -145,23 +161,17 @@
       width *= size.width
     }
 
-    set text(font: font, size:fontsize)
-    cetz.canvas(..cetz-args, {
-      draw.diagram((0,0), elements, width:width, inset:inset, theme:theme, stroke:stroke, labels:labels)
-      // cetz.draw.get-ctx(ctx => {
-      //   let layout = layout-elements(
-      //     ctx, (0,0),
-      //     cetz.util.resolve-number(ctx, width),
-      //     cetz.util.resolve-number(ctx, inset),
-      //     elements
-      //   )
-      //   draw-elements(ctx, layout, stroke:stroke, theme:theme, labels:labels)
-      // })
-    })
+    set text(font: font, size: fontsize)
+    cetz.canvas(
+      ..cetz-args,
+      {
+        draw.diagram((0, 0), elements, width: width, inset: inset, theme: theme, stroke: stroke, labels: labels)
+      },
+    )
   })
 }
 
-#let shneiderman( ..args ) = (body) => {
-  show raw.where(block:true, lang: "nassi"): diagram.with(..args)
+#let shneiderman(..args) = body => {
+  show raw.where(block: true, lang: "nassi"): diagram.with(..args)
   body
 }
