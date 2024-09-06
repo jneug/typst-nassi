@@ -59,6 +59,49 @@
           50%
         },
       )
+    } else if line.starts-with("switch ") {
+      let branches = (:)
+      let default = ()
+      let default-branch = false
+      let switch-count = 0
+
+      i += 1
+      while switch-count > 0 or code.at(i).trim() not in ("endswitch", "end switch") {
+        let code-line = code.at(i).trim()
+
+        if switch-count > 0 and code-line in ("endswitch", "end switch") {
+          switch-count -= 1
+        }
+
+        if code-line.starts-with("case ") and switch-count == 0 {
+          default-branch = false
+          let key = code-line.slice("case ".len())
+          branches.insert(key, ())
+        } else if code-line.starts-with("default") and switch-count == 0 {
+          default-branch = true
+        } else if branches.len() > 0 or default-branch {
+          if code-line.starts-with("switch") {
+            switch-count += 1
+          } 
+          if default-branch {
+            default += (code.at(i),)
+          } else {
+            branches.at(branches.keys().at(-1)) += (code.at(i),)
+          }
+        }
+
+        i += 1
+      }
+
+      for (key, value) in branches {
+        branches.at(key) = parse(value.join("\n"))
+      }
+      branches.default = parse(default.join("\n"))
+
+      elems += elements.switch(
+        line.slice("switch ".len()).trim(),
+        branches
+      )
     } else if line.starts-with("while ") {
       let children = ()
       let while-count = 0
