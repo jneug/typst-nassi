@@ -4,7 +4,7 @@
 
 #import "elements.typ": TYPES, empty
 
-#let if-auto(value, default, f:(v) => v) = if value == auto {
+#let if-auto(value, default, f: v => v) = if value == auto {
   f(default)
 } else {
   f(value)
@@ -58,17 +58,18 @@
   return elements
 }
 
-#let layout-elements(ctx, (x, y), width, inset, elements, i:0) = {
+#let layout-elements(ctx, (x, y), width, inset, elements, i: 0) = {
   let elems = ()
 
   for element in elements {
     i += 1
-    element.name = if-auto(element.name, "e"+str(i))
+    element.name = if-auto(element.name, "e" + str(i))
     element.pos = (x, y)
     element.width = width
     element.inset = if-auto(
-      element.inset, inset,
-      f:resolve-number.with(ctx)
+      element.inset,
+      inset,
+      f: resolve-number.with(ctx),
     )
     element.height = if element.height == auto {
       measure(ctx, block(width: width * ctx.length, element.text)).at(1) + 2 * element.inset
@@ -87,7 +88,7 @@
         width - 2 * element.inset,
         inset,
         () + element.elements,
-        i: i
+        i: i,
       )
       element.grow = element.elements.fold(0, (h, e) => h + e.height + e.grow)
 
@@ -104,7 +105,7 @@
         width * element.column-split,
         inset,
         () + element.left,
-        i: i
+        i: i,
       )
 
       if element.right == none or element.right == () {
@@ -116,7 +117,7 @@
         width * (1 - element.column-split),
         inset,
         () + element.right,
-        i: i
+        i: i,
       )
 
       let (height-left, height-right) = (
@@ -178,7 +179,7 @@
         stroke: stroke,
         fill: if-auto(
           element.fill,
-          theme.at("empty", default: rgb("#fffff3"))
+          theme.at("empty", default: rgb("#fffff3")),
         ),
         name: element.name,
       )
@@ -195,7 +196,7 @@
         stroke: stroke,
         fill: if-auto(
           element.fill,
-          theme.at("process", default: rgb("#fceece"))
+          theme.at("process", default: rgb("#fceece")),
         ),
         name: element.name,
       )
@@ -212,7 +213,7 @@
         stroke: stroke,
         fill: if-auto(
           element.fill,
-          theme.at("call", default: rgb("#fceece")).darken(5%)
+          theme.at("call", default: rgb("#fceece")).darken(5%),
         ),
         name: element.name,
       )
@@ -225,7 +226,7 @@
         stroke: stroke,
         fill: if-auto(
           element.fill,
-          theme.at("call", default: rgb("#fceece"))
+          theme.at("call", default: rgb("#fceece")),
         ),
       )
       draw.content(
@@ -241,7 +242,7 @@
         stroke: stroke,
         fill: if-auto(
           element.fill,
-          theme.at("loop", default: rgb("#dcefe7"))
+          theme.at("loop", default: rgb("#dcefe7")),
         ),
         name: element.name,
       )
@@ -252,7 +253,7 @@
         name: element.name + "-text",
       )
 
-      draw-elements(ctx, element.elements, stroke: stroke, theme: theme)
+      draw-elements(ctx, element.elements, stroke: stroke, theme: theme, labels: labels)
     } else if element.type == TYPES.FUNCTION {
       draw.rect(
         (x, y),
@@ -260,7 +261,7 @@
         stroke: stroke,
         fill: if-auto(
           element.fill,
-          theme.at("function", default: rgb("#ffffff"))
+          theme.at("function", default: rgb("#ffffff")),
         ),
         name: element.name,
       )
@@ -271,14 +272,14 @@
         name: element.name + "-text",
       )
 
-      draw-elements(ctx, element.elements, stroke: stroke, theme: theme)
+      draw-elements(ctx, element.elements, stroke: stroke, theme: theme, labels: labels)
     } else if element.type == TYPES.BRANCH {
       draw.rect(
         (x, y),
         (x + element.width, y - element.height - element.grow),
         fill: if-auto(
           element.fill,
-          theme.at("branch", default: rgb("#fadad0"))
+          theme.at("branch", default: rgb("#fadad0")),
         ),
         stroke: stroke,
         name: element.name,
@@ -316,8 +317,8 @@
         anchor: "south-east",
       )
 
-      draw-elements(ctx, element.left, stroke: stroke, theme: theme)
-      draw-elements(ctx, element.right, stroke: stroke, theme: theme)
+      draw-elements(ctx, element.left, stroke: stroke, theme: theme, labels: labels)
+      draw-elements(ctx, element.right, stroke: stroke, theme: theme, labels: labels)
     } else if element.type == TYPES.SWITCH {
       draw.rect(
         (x, y),
@@ -377,7 +378,7 @@
       )
 
       for branch in element.branches.values() {
-         draw-elements(ctx, branch, stroke: stroke, theme: theme)
+         draw-elements(ctx, branch, stroke: stroke, theme: theme, labels: labels)
       }
     }
   }

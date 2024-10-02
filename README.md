@@ -110,6 +110,17 @@ See `assets/` for usage examples.
 
 ## Changelog
 
+### Version 0.2.0
+
+- Element functions renamed:
+	- `process` -> `statement`
+	- `loop` -> `while`
+	- `branch` -> `if`
+
+### Version 0.1.1
+
+- Fixed labels option not working for branches in other elements.
+
 ### Version 0.1.0
 
 Initial release of **nassi**.
