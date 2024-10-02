@@ -143,13 +143,11 @@
           width / element.branches.len(),
           inset,
           () + element.branches.at(key),
-          i: i
+          i: i,
         )
       }
 
-      let heights = element.branches.values().map(
-        branch => branch.fold(0, (h, e) => h + e.height + e.grow)
-        )
+      let heights = element.branches.values().map(branch => branch.fold(0, (h, e) => h + e.height + e.grow))
 
       element.grow = calc.max(..heights)
 
@@ -325,7 +323,7 @@
         (x + element.width, y - element.height - element.grow),
         fill: if-auto(
           element.fill,
-          theme.at("branch", default: rgb("#fadad0"))
+          theme.at("branch", default: rgb("#fadad0")),
         ),
         stroke: stroke,
         name: element.name,
@@ -353,17 +351,17 @@
         let key = element.branches.keys().at(i)
         draw.line(
           (
-           x + element.width * i / element.branches.len(), 
-           y - element.height * i / (element.branches.len() - 1)
+            x + element.width * i / element.branches.len(),
+            y - element.height * i / (element.branches.len() - 1),
           ),
           (x + element.width * i / element.branches.len(), y - element.height),
         )
         draw.content(
           (
-           x +  element.width * i / element.branches.len() + element.inset * .5, 
-           y - element.height + element.inset * .5
+            x + element.width * i / element.branches.len() + element.inset * .5,
+            y - element.height + element.inset * .5,
           ),
-          text(.66em, key),
+          text(.66em, element.labels.at(i, default: key)),
           anchor: "south-west",
         )
       }
@@ -378,7 +376,7 @@
       )
 
       for branch in element.branches.values() {
-         draw-elements(ctx, branch, stroke: stroke, theme: theme, labels: labels)
+        draw-elements(ctx, branch, stroke: stroke, theme: theme, labels: labels)
       }
     }
   }

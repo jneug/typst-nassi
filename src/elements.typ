@@ -64,12 +64,13 @@
   ..args.named(),
 )
 
-#let switch( text, branches, ..args ) = element(TYPES.SWITCH,
+#let switch(text, branches, labels: (), ..args) = element(
+  TYPES.SWITCH,
   text,
   column-split: (branches.len() - 1) / branches.len(),
   branches: branches,
-  labels: (),
-  ..args.named()
+  labels: labels,
+  ..args.named(),
 )
 
 #let parallel(text, ..branches-args) = element(
