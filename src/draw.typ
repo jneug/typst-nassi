@@ -131,6 +131,30 @@
       }
 
       element.grow = calc.max(height-left, height-right)
+    } else if element.type == TYPES.SWITCH {
+      for (index, key) in element.branches.keys().enumerate() {
+        if element.branches.at(key) == none or element.branches.at(key) == () {
+          element.branches.at(key) = empty()
+        }
+        (element.branches.at(key), i) = layout-elements(
+          ctx,
+          (x + width * index / element.branches.len(), y - element.height),
+          width / element.branches.len(),
+          inset,
+          () + element.branches.at(key),
+          i: i
+        )
+      }
+
+      let heights = element.branches.values().map(
+        branch => branch.fold(0, (h, e) => h + e.height + e.grow)
+        )
+
+      element.grow = calc.max(..heights)
+
+      for (index, key) in element.branches.keys().enumerate() {
+        element.branches.at(key) = rebalance-heights(element.branches.at(key), element.grow - heights.at(index))
+      }
     }
 
     elems.push(element)
@@ -294,6 +318,67 @@
 
       draw-elements(ctx, element.left, stroke: stroke, theme: theme)
       draw-elements(ctx, element.right, stroke: stroke, theme: theme)
+    } else if element.type == TYPES.SWITCH {
+      draw.rect(
+        (x, y),
+        (x + element.width, y - element.height - element.grow),
+        fill: if-auto(
+          element.fill,
+          theme.at("branch", default: rgb("#fadad0"))
+        ),
+        stroke: stroke,
+        name: element.name,
+      )
+
+      let content-width = measure(ctx, element.text).at(0) + 2 * element.inset
+      draw.content(
+        (
+          x + element.column-split * element.width + (.5 - element.column-split) * content-width,
+          y - element.inset,
+        ),
+        element.text,
+        anchor: "north",
+        name: element.name + "-text",
+      )
+
+      draw.line(
+        (x, y),
+        (x + element.width * element.column-split, y - element.height),
+        (x + element.width, y),
+        stroke: stroke,
+      )
+
+      for i in range(element.branches.len() - 1) {
+        let key = element.branches.keys().at(i)
+        draw.line(
+          (
+           x + element.width * i / element.branches.len(), 
+           y - element.height * i / (element.branches.len() - 1)
+          ),
+          (x + element.width * i / element.branches.len(), y - element.height),
+        )
+        draw.content(
+          (
+           x +  element.width * i / element.branches.len() + element.inset * .5, 
+           y - element.height + element.inset * .5
+          ),
+          text(.66em, key),
+          anchor: "south-west",
+        )
+      }
+
+      draw.content(
+        (
+          x + element.width - element.inset * .5,
+          y - element.height + element.inset * .5,
+        ),
+        text(.66em, element.branches.keys().at(-1, default: labels.at(1, default: "default"))),
+        anchor: "south-east",
+      )
+
+      for branch in element.branches.values() {
+         draw-elements(ctx, branch, stroke: stroke, theme: theme)
+      }
     }
   }
 }
