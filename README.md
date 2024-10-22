@@ -110,6 +110,10 @@ See `assets/` for usage examples.
 
 ## Changelog
 
+### Version 0.1.2
+
+- Fix for deprecation warnings in Typst 0.12.
+
 ### Version 0.1.1
 
 - Fixed labels option not working for branches in other elements.
