@@ -1,4 +1,4 @@
-#import "@preview/cetz:0.2.2"
+#import "@preview/cetz:0.3.0"
 
 #import "elements.typ"
 #import "draw.typ"
@@ -82,7 +82,7 @@
         } else if branches.len() > 0 or default-branch {
           if code-line.starts-with("switch") {
             switch-count += 1
-          } 
+          }
           if default-branch {
             default += (code.at(i),)
           } else {
@@ -100,7 +100,7 @@
 
       elems += elements.switch(
         line.slice("switch ".len()).trim(),
-        branches
+        branches,
       )
     } else if line.starts-with("while ") {
       let children = ()
@@ -231,7 +231,9 @@
   })
 }
 
-#let shneiderman(..args) = body => {
-  show raw.where(block: true, lang: "nassi"): diagram.with(..args)
-  body
-}
+#let shneiderman(..args) = (
+  body => {
+    show raw.where(block: true, lang: "nassi"): diagram.with(..args)
+    body
+  }
+)
