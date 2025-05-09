@@ -1,5 +1,6 @@
 #import "elements.typ"
 #import "draw.typ"
+#import draw: cetz
 
 #let parse(content) = {
   if content == none {
