@@ -1,4 +1,4 @@
-#import "@preview/cetz:0.3.2" as cetz: draw
+#import "@preview/cetz:0.3.4" as cetz: draw
 
 #import cetz.util: measure, resolve-number
 

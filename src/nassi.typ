@@ -1,5 +1,3 @@
-#import "@preview/cetz:0.3.2"
-
 #import "elements.typ"
 #import "draw.typ"
 
@@ -166,13 +164,13 @@
     function: rgb("#ffffff"),
   ),
   colorful: (
-    empty: color.map.rainbow.first(),
-    process: color.map.rainbow.at(int(color.map.turbo.len() / 4)),
-    call: color.map.rainbow.at(int(color.map.turbo.len() / 4)),
-    branch: color.map.rainbow.at(int(color.map.turbo.len() / 8)),
-    loop: color.map.rainbow.at(int(color.map.turbo.len() / 16)),
-    switch: color.map.rainbow.at(int(color.map.turbo.len() / 8)),
-    parallel: color.map.rainbow.at(int(color.map.turbo.len() / 16)),
+    empty: color.map.turbo.first(),
+    process: color.map.turbo.at(int(color.map.turbo.len() / 4)),
+    call: color.map.turbo.at(int(color.map.turbo.len() / 4)),
+    branch: color.map.turbo.at(int(color.map.turbo.len() / 8)),
+    loop: color.map.turbo.at(int(color.map.turbo.len() / 16)),
+    switch: color.map.turbo.at(int(color.map.turbo.len() / 8)),
+    parallel: color.map.turbo.at(int(color.map.turbo.len() / 16)),
     function: rgb("#ffffff"),
   ),
   nocolor: (
@@ -199,7 +197,7 @@
 
 #let diagram(
   width: 100%,
-  font: ("Verdana", "Geneva"),
+  font: ("Verdana", "Arial", "Geneva"),
   fontsize: 10pt,
   inset: .5em,
   theme: themes.default,
@@ -222,7 +220,7 @@
     }
 
     set text(font: font, size: fontsize)
-    cetz.canvas(
+    draw.cetz.canvas(
       ..cetz-args,
       {
         draw.diagram((0, 0), elements, width: width, inset: inset, theme: theme, stroke: stroke, labels: labels)
