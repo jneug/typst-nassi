@@ -1,0 +1,114 @@
+{
+	"id": "4855ac7c-799f-3a3f-01c7-62646882",
+	"type": "InsertNode",
+	"followElement": {
+		"id": "bdd10fa2-a867-6297-69d0-37abfd9d",
+		"type": "FunctionNode",
+		"text": "funcname",
+		"parameters": [],
+		"followElement": {
+			"id": "d2fd0897-addd-5581-11f0-c9b77cff",
+			"type": "InsertNode",
+			"followElement": {
+				"id": "92bb2533-2a45-ccc1-1cb0-9faa4891",
+				"type": "TaskNode",
+				"text": "Anweisung",
+				"followElement": {
+					"id": "7045684b-6d01-5a4e-67ab-388d5baf",
+					"type": "InsertNode",
+					"followElement": {
+						"id": "a5646968-0732-e5d8-59f9-825fcd70",
+						"type": "BranchNode",
+						"text": "y == x",
+						"followElement": {
+							"id": "7c965dff-65f6-4a57-c460-b4535352",
+							"type": "InsertNode",
+							"followElement": null
+						},
+						"trueChild": {
+							"id": "392206f1-d4fe-d97f-0540-85e9326d",
+							"type": "InsertNode",
+							"followElement": {
+								"type": "Placeholder"
+							}
+						},
+						"falseChild": {
+							"id": "f1af4224-8ccc-bf7d-adf0-6170e5e9",
+							"type": "InsertNode",
+							"followElement": {
+								"id": "1982383a-54dc-d101-7ee0-88fa41a4",
+								"type": "TaskNode",
+								"text": "Anweisungen",
+								"followElement": {
+									"id": "754d998d-3c1b-dc1d-5ff2-b5800fea",
+									"type": "InsertNode",
+									"followElement": null
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"child": {
+			"id": "eaac44bb-69f2-c8cf-3236-df2eb985",
+			"type": "InsertNode",
+			"followElement": {
+				"id": "c6d70abd-87d0-0c7a-75d9-8e6cd47f",
+				"type": "TaskNode",
+				"text": "do Seomthing",
+				"followElement": {
+					"id": "6f661be6-3b6c-6f80-b536-267f3b60",
+					"type": "InsertNode",
+					"followElement": {
+						"id": "fd1e060a-872d-a764-4339-fc20ab90",
+						"type": "TaskNode",
+						"text": "a = 4",
+						"followElement": {
+							"id": "3e7d2fa1-eaeb-f282-d775-7410de9a",
+							"type": "InsertNode",
+							"followElement": {
+								"id": "e8f416ee-e813-8dd5-df5f-2d391aac",
+								"type": "BranchNode",
+								"text": "a == 4",
+								"followElement": {
+									"id": "2c563474-926e-2684-6498-b5cc3573",
+									"type": "InsertNode",
+									"followElement": null
+								},
+								"trueChild": {
+									"id": "bda1bc95-717c-59ac-d515-09203109",
+									"type": "InsertNode",
+									"followElement": {
+										"id": "82e0cf55-4b4f-b19b-0128-ce96cb44",
+										"type": "TaskNode",
+										"text": "b <- 6",
+										"followElement": {
+											"id": "e4346983-7cda-e1ae-7e47-5f1ca85f",
+											"type": "InsertNode",
+											"followElement": null
+										}
+									}
+								},
+								"falseChild": {
+									"id": "d85a94c1-7a84-4e77-f276-67f59662",
+									"type": "InsertNode",
+									"followElement": {
+										"id": "9bd106b3-88ef-e592-4e40-8aeee5a0",
+										"type": "TaskNode",
+										"text": "anweisung",
+										"followElement": {
+											"id": "3a1212d0-3b60-96fb-f18d-e6d72bf2",
+											"type": "InsertNode",
+											"followElement": null
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

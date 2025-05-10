@@ -1,0 +1,67 @@
+{
+	"id": "e991f715-40fa-9824-231e-26cde3e5",
+	"type": "InsertNode",
+	"followElement": {
+		"id": "42d5b050-fa09-e2e6-fe7c-ea9d53be",
+		"type": "CaseNode",
+		"text": "switch here",
+		"followElement": {
+			"id": "afe8663b-ec90-8b54-4765-072717f8",
+			"type": "InsertNode",
+			"followElement": null
+		},
+		"defaultOn": true,
+		"defaultNode": {
+			"id": "a9e2546d-07b4-1305-60a9-ce4c5645",
+			"type": "InsertCase",
+			"text": "Sonst",
+			"followElement": {
+				"id": "8dbb6d9b-ad3e-196b-312a-baafb4fa",
+				"type": "InsertNode",
+				"followElement": {
+					"id": "9a350dce-39c6-b7e4-a50b-f97fba02",
+					"type": "TaskNode",
+					"text": "call 2",
+					"followElement": {
+						"id": "be7e35e6-d787-f31d-c7af-4c4143e5",
+						"type": "InsertNode",
+						"followElement": null
+					}
+				}
+			}
+		},
+		"cases": [
+			{
+				"id": "149e9711-42f7-b42e-47c9-ae69096a",
+				"type": "InsertCase",
+				"text": "case 1",
+				"followElement": {
+					"id": "7985eb4c-f276-00b2-a50e-2858f881",
+					"type": "InsertNode",
+					"followElement": {
+						"type": "Placeholder"
+					}
+				}
+			},
+			{
+				"id": "ed06205d-64aa-bbe1-53a7-85d88a9a",
+				"type": "InsertCase",
+				"text": "case 2",
+				"followElement": {
+					"id": "d2614be1-21d9-6959-8436-89765b37",
+					"type": "InsertNode",
+					"followElement": {
+						"id": "a1f617df-d10c-89b4-3ff6-95bff508",
+						"type": "TaskNode",
+						"text": "call 1",
+						"followElement": {
+							"id": "cad82a44-fbc7-6733-8e85-d4b0bc01",
+							"type": "InsertNode",
+							"followElement": null
+						}
+					}
+				}
+			}
+		]
+	}
+}
