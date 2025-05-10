@@ -110,6 +110,16 @@ See `assets/` for usage examples.
 
 ## Changelog
 
+### Version 0.1.4
+
+- Added a test-last loop block.
+- Added a parser for [Struktog](https://struktog.openpatch.org) JSON files.
+
+### Version 0.1.3
+
+- Compatibility with Typst 0.13.1.
+- Bumped dependencies.
+
 ### Version 0.1.2
 
 - Fix for deprecation warnings in Typst 0.12.
