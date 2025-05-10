@@ -1,4 +1,5 @@
 root := justfile_directory()
+package-fork := "$TYPST_PKG_FORK"
 
 export TYPST_ROOT := root
 
@@ -29,6 +30,8 @@ install: (package "@local")
 
 # install the library with the "@preview" prefix (for pre-release testing)
 install-preview: (package "@preview")
+
+prepare: (package package-fork)
 
 # create a symbolic link to this library in the target repository
 link target="@local":
