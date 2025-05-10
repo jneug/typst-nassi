@@ -82,14 +82,25 @@
         element.elements = empty()
       }
 
-      (element.elements, i) = layout-elements(
-        ctx,
-        (x + 2 * element.inset, y - element.height),
-        width - 2 * element.inset,
-        inset,
-        () + element.elements,
-        i: i,
-      )
+      if element.at("test-last", default: false) {
+        (element.elements, i) = layout-elements(
+          ctx,
+          (x + 2 * element.inset, y),
+          width - 2 * element.inset,
+          inset,
+          () + element.elements,
+          i: i,
+        )
+      } else {
+        (element.elements, i) = layout-elements(
+          ctx,
+          (x + 2 * element.inset, y - element.height),
+          width - 2 * element.inset,
+          inset,
+          () + element.elements,
+          i: i,
+        )
+      }
       element.grow = element.elements.fold(0, (h, e) => h + e.height + e.grow)
 
       if element.type == TYPES.FUNCTION {
@@ -244,13 +255,22 @@
         ),
         name: element.name,
       )
-      draw.content(
-        (x + element.inset, y - element.height * .5),
-        element.text,
-        anchor: "west",
-        name: element.name + "-text",
-      )
 
+      if not element.at("test-last", default: false) {
+        draw.content(
+          (x + element.inset, y - element.height * .5),
+          element.text,
+          anchor: "west",
+          name: element.name + "-text",
+        )
+      } else {
+        draw.content(
+          (x + element.inset, y - element.grow - element.height * .5),
+          element.text,
+          anchor: "west",
+          name: element.name + "-text",
+        )
+      }
       draw-elements(ctx, element.elements, stroke: stroke, theme: theme, labels: labels)
     } else if element.type == TYPES.FUNCTION {
       draw.rect(

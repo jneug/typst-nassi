@@ -47,10 +47,11 @@
 
 #let call = element.with(TYPES.CALL)
 
-#let loop(text, elements, ..args) = element(
+#let loop(text, elements, test-last: false, ..args) = element(
   TYPES.LOOP,
   text,
   elements: elements,
+  test-last: test-last,
   ..args.named(),
 )
 
