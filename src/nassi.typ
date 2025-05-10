@@ -236,3 +236,128 @@
     body
   }
 )
+
+#let struktog(json-data, ..nassi-args) = {
+  let parse-struktog(node) = {
+    let strukt-def = ()
+
+    while node != none {
+      if node.type == "Placeholder" { return strukt-def }
+
+      if node.type == "FunctionNode" {
+        strukt-def.push(
+          "function "
+            + if node.text == "" {
+              "func(" + node.parameters.join(", ") + ")"
+            } else { node.text + "(" + node.parameters.join(", ") + ")" },
+        )
+        strukt-def += parse-struktog(node.child)
+        strukt-def.push("end function")
+      } else if node.type == "TaskNode" {
+        strukt-def.push(node.text)
+      } else if node.type == "BranchNode" {
+        strukt-def.push("if " + node.text)
+        strukt-def += parse-struktog(node.trueChild)
+        strukt-def += ("else",)
+        strukt-def += parse-struktog(node.falseChild)
+        strukt-def.push("end if")
+      } else if node.type == "CountLoopNode" {
+        strukt-def.push("while " + node.text)
+        strukt-def += parse-struktog(node.child)
+        strukt-def.push("end while")
+      } else if node.type == "CaseNode" {
+        strukt-def.push("switch " + node.text)
+        // strukt-def += parse-struktog(node.trueChild)
+        // strukt-def += ("else",)
+        // strukt-def += parse-struktog(node.falseChild)
+
+        for case-node in node.cases {
+          strukt-def.push("case " + case-node.text)
+          strukt-def += parse-struktog(case-node.followElement)
+        }
+
+        if node.defaultOn {
+          strukt-def.push("default")
+          strukt-def += parse-struktog(node.defaultNode.followElement)
+        }
+
+        strukt-def.push("end switch")
+      }
+      node = node.followElement
+    }
+
+    return strukt-def
+  }
+
+  let struktog-parsed = parse-struktog(json-data)
+  diagram(raw(struktog-parsed.join("\n")), ..nassi-args)
+}
+
+#let struktog(json-data, ..nassi-args) = {
+  let parse-struktog(node) = {
+    let strukt-def = ()
+
+    while node != none {
+      if node.type == "Placeholder" {
+        strukt-def += elements.empty()
+      } else if node.type == "FunctionNode" {
+        strukt-def += elements.function(
+          if node.text == "" {
+            "func(" + node.parameters.sorted(key: p => p.pos).map(p => p.parName).join(", ") + ")"
+          } else {
+            node.text + "(" + node.parameters.sorted(key: p => p.pos).map(p => p.parName).join(", ") + ")"
+          },
+          parse-struktog(node.child),
+        )
+      } else if node.type == "TaskNode" {
+        strukt-def += elements.process(node.text)
+      } else if node.type == "InputNode" {
+        strukt-def += elements.process("E: " + node.text)
+      } else if node.type == "OutputNode" {
+        strukt-def += elements.process("A: " + node.text)
+      } else if node.type == "BranchNode" {
+        strukt-def += elements.branch(
+          node.text,
+          parse-struktog(node.trueChild),
+          parse-struktog(node.falseChild),
+        )
+      } else if node.type in ("CountLoopNode", "HeadLoopNode") {
+        strukt-def += elements.loop(
+          node.text,
+          parse-struktog(node.child),
+        )
+      } else if node.type == "FootLoopNode" {
+        strukt-def += elements.loop(
+          node.text,
+          test-last: true,
+          parse-struktog(node.child),
+        )
+      } else if node.type == "CaseNode" {
+        let cases = (:)
+        for case-node in node.cases {
+          let case-text = case-node.text
+          let i = 0
+          while case-text in cases {
+            i += 1
+            case-text = case-node.text + " " + str(i)
+          }
+          cases.insert(case-text, parse-struktog(case-node.followElement))
+        }
+        if node.defaultOn {
+          cases.insert("default", parse-struktog(node.defaultNode.followElement))
+        }
+
+        strukt-def += elements.switch(
+          node.text,
+          cases,
+        )
+      }
+      node = node.at("followElement", default: none)
+    }
+
+    return strukt-def
+  }
+
+  let struktog-parsed = parse-struktog(json-data)
+  diagram(struktog-parsed, ..nassi-args)
+}
