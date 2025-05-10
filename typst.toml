@@ -1,6 +1,6 @@
 [package]
 name = "nassi"
-version = "0.1.3"
+version = "0.1.4"
 entrypoint = "src/nassi.typ"
 authors = ["Jonas Neugebauer"]
 license = "MIT"

@@ -1,4 +1,4 @@
-# nassi (v0.1.3)
+# nassi (v0.1.4)
 
 **nassi** is a package for [Typst](https://typst.app) to draw [Nassi-Shneiderman diagrams](https://en.wikipedia.org/wiki/Nassi–Shneiderman_diagram) (Struktogramme).
 
@@ -9,13 +9,13 @@
 Import **nassi** in your document:
 
 ```typst
-#import "@preview/nassi:0.1.3"
+#import "@preview/nassi:0.1.4"
 ```
 
 There are several options to draw diagrams. One is to parse all code-blocks with the language "nassi". Simply add a show-rule like this:
 
 ````typst
-#import "@preview/nassi:0.1.3"
+#import "@preview/nassi:0.1.4"
 #show: nassi.shneiderman()
 
 ```nassi
@@ -39,7 +39,7 @@ endfunction
 In this case, the diagram is created from a simple pseudocode. To have more control over the output, you can add blocks manually using the element functions provided in `nassi.elements`:
 
 ````typst
-#import "@preview/nassi:0.1.3"
+#import "@preview/nassi:0.1.4"
 
 #nassi.diagram({
 	import nassi.elements: *
@@ -66,7 +66,7 @@ Since **nassi** uses **cetz** for drawing, you can add diagrams directly to a ca
 
 ````typst
 #import "@preview/cetz:0.2.2"
-#import "@preview/nassi:0.1.3"
+#import "@preview/nassi:0.1.4"
 
 #cetz.canvas({
   import nassi.draw: diagram
