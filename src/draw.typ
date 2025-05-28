@@ -48,6 +48,10 @@
         for (b, elems) in e.branches {
           e.branches.at(b) = rebalance-heights(elems, growth, y: e.pos.at(1) - e.height)
         }
+      } else if e.type == TYPES.PARALLEL {
+        for i in range(e.branches.len()) {
+          e.branches.at(i) = rebalance-heights(e.branches.at(i), growth, y: e.pos.at(1) - e.height)
+        }
       }
 
       elements.at(i) = e
@@ -164,6 +168,31 @@
       for (index, key) in element.branches.keys().enumerate() {
         element.branches.at(key) = rebalance-heights(element.branches.at(key), element.grow - heights.at(index))
       }
+    } else if element.type == TYPES.PARALLEL {
+      for (index, branch) in element.branches.enumerate() {
+        if branch == none or branch == () {
+          branch = empty()
+          element.branches.at(index) = branch
+        }
+        (element.branches.at(index), i) = layout-elements(
+          ctx,
+          (x + width * index / element.branches.len(), y - element.height),
+          width / element.branches.len(),
+          inset,
+          () + branch,
+          i: i,
+        )
+      }
+
+      let heights = element.branches.map(branch => branch.fold(0, (h, e) => h + e.height + e.grow))
+
+      element.grow = calc.max(..heights)
+
+      for (index, branch) in element.branches.enumerate() {
+        element.branches.at(index) = rebalance-heights(branch, element.grow - heights.at(index))
+      }
+
+      element.grow += element.height
     }
 
     elems.push(element)
@@ -397,6 +426,48 @@
       for branch in element.branches.values() {
         draw-elements(ctx, branch, stroke: stroke, theme: theme, labels: labels)
       }
+    } else if element.type == TYPES.PARALLEL {
+      draw.rect(
+        (x, y),
+        (x + element.width, y - element.height),
+        fill: if-auto(
+          element.fill,
+          theme.at("parallel", default: rgb("#fadad0")),
+        ),
+        stroke: stroke,
+        name: element.name,
+      )
+      draw.line(
+        (x + element.height, y),
+        (x, y - element.height),
+      )
+      draw.line(
+        (x + element.width - element.height, y),
+        (x + element.width, y - element.height),
+      )
+
+      for branch in element.branches {
+        draw-elements(ctx, branch, stroke: stroke, theme: theme, labels: labels)
+      }
+
+      draw.rect(
+        (x, y - element.grow),
+        (x + element.width, y - element.height - element.grow),
+        fill: if-auto(
+          element.fill,
+          theme.at("parallel", default: rgb("#fadad0")),
+        ),
+        stroke: stroke,
+        name: element.name,
+      )
+      draw.line(
+        (x, y - element.grow),
+        (x + element.height, y - element.height - element.grow),
+      )
+      draw.line(
+        (x + element.width, y - element.grow),
+        (x + element.width - element.height, y - element.height - element.grow),
+      )
     }
   }
 }

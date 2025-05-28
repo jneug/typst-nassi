@@ -80,9 +80,10 @@
   ..args.named(),
 )
 
-#let parallel(text, ..branches-args) = element(
+#let parallel(..branches-args) = element(
   TYPES.PARALLEL,
-  text,
+  none,
+  column-split: (branches-args.pos().len() - 1) / branches-args.pos().len(),
   branches: branches-args.pos(),
   ..branches-args.named(),
 )
