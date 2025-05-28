@@ -2,7 +2,7 @@
 
 #import cetz.util: measure, resolve-number
 
-#import "elements.typ": TYPES, empty
+#import "elements.typ": TYPES, DYNAMIC_TYPES, empty
 
 #let if-auto(value, default, f: v => v) = if value == auto {
   f(default)
@@ -12,12 +12,7 @@
 
 #let rebalance-heights(elements, height-growth, y: auto) = {
   // Count elements that can have a dynamic height
-  let dynamic = 0
-  for e in elements {
-    if e.type in (TYPES.PROCESS, TYPES.CALL, TYPES.EMPTY) {
-      dynamic += 1
-    }
-  }
+  let dynamic = elements.map(e => if e.type in DYNAMIC_TYPES { 1 } else { 0 }).sum()
 
   // Adjust height and position of elements
   if y == auto {
@@ -29,7 +24,7 @@
     for (i, e) in elements.enumerate() {
       e.pos.at(1) = y
 
-      if e.type in (TYPES.PROCESS, TYPES.CALL, TYPES.EMPTY) {
+      if e.type in DYNAMIC_TYPES {
         e.height += growth
         //e.grow += growth
 
@@ -49,6 +44,10 @@
       } else if e.type == TYPES.BRANCH {
         e.left = rebalance-heights(e.left, growth, y: e.pos.at(1) - e.height)
         e.right = rebalance-heights(e.right, growth, y: e.pos.at(1) - e.height)
+      } else if e.type == TYPES.SWITCH {
+        for (b, elems) in e.branches {
+          e.branches.at(b) = rebalance-heights(elems, growth, y: e.pos.at(1) - e.height)
+        }
       }
 
       elements.at(i) = e
@@ -297,7 +296,7 @@
         (x + element.width, y - element.height - element.grow),
         fill: if-auto(
           element.fill,
-          theme.at("branch", default: rgb("#fadad0")),
+          theme.at("function", default: rgb("#fadad0")),
         ),
         stroke: stroke,
         name: element.name,
@@ -343,7 +342,7 @@
         (x + element.width, y - element.height - element.grow),
         fill: if-auto(
           element.fill,
-          theme.at("branch", default: rgb("#fadad0")),
+          theme.at("switch", default: rgb("#fadad0")),
         ),
         stroke: stroke,
         name: element.name,

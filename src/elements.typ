@@ -11,6 +11,12 @@
   CALL: 8,
 )
 
+#let DYNAMIC_TYPES = (
+  TYPES.PROCESS,
+  TYPES.CALL,
+  TYPES.EMPTY,
+)
+
 #let element(type, text, ..args) = (
   (
     type: type,
