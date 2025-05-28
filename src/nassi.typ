@@ -217,8 +217,13 @@
   layout(size => {
     let width = width
     if type(width) == ratio {
+      // set page(width: auto)
+      if float.is-infinite(size.width / 1pt) {
+        panic("For pages with unbound width, provide an absolute `width` to `diagram`.")
+      }
       width *= size.width
     }
+
 
     set text(font: font, size: fontsize)
     draw.cetz.canvas(
